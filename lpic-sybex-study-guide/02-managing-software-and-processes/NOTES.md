@@ -21,7 +21,7 @@
 
 Viewing RPM package files
 
-```console
+```bash
  # ls -1 *.rpm
  docker-1.13.1-94.gitb2f74b2.el7.centos.x86_64.rpm
  emacs-24.3-22.el7.x86_64.rpm
@@ -40,7 +40,7 @@ Viewing RPM package files
 
 Extracting Data from RPMs
 
-```console
+```bash
 $ rpm2cpio emacs-24.3-22.el7.x86_64.rpm > emacs.cpio
 $
 ```
