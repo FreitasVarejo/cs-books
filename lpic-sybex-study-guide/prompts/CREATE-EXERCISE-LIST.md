@@ -1,34 +1,38 @@
-Act as an expert Linux Professional Institute (LPI) Examiner and a Senior Linux System Administrator. Based strictly on the provided documents for the LPIC-1 Study Guide (Exams 101-500), generate an advanced, 10-question multiple-choice practice exam.
+Excellent. Based strictly on the detailed plan and question distribution you just created for [Chapter 3 Configuring Hardware, Topic: Storage Basics] of [ LPIC 1 ], generate the multiple-choice practice exam now.
 
 ### 0. SCOPE OF THE EXAM (CRITICAL)
 
-- Focus EXCLUSIVELY on **Chapter 1: Exploring Linux Command-Line Tools**.
-- Do not include concepts, commands, or tools that are introduced in later chapters.
-- Test me only on topics covered in this specific chapter, such as: command-line basics, shell options, environment variables, text-editing (vim, nano, emacs), text filters (cat, paste, split, sort, nl, head, tail, wc, cut, etc.), regular expressions (grep, BRE, ERE), streams, redirection, pipes, and `sed`.
+- Focus EXCLUSIVELY on the subtopics and constraints you outlined in the previous step.
+- Do not include concepts, commands, or tools that belong to other chapters or materials.
 
 ### 1. STRICT ORIGINALITY RULE (CRITICAL)
 
-- **DO NOT** copy, rephrase, or repurpose any questions from the "Assessment Test", "Review Questions", or any end-of-chapter exercises present in the provided document.
-- You must generate 100% original questions based purely on the theoretical text, technical concepts, command descriptions, and tables within Chapter 1.
+- DO NOT copy, rephrase, or repurpose any questions from the "Assessment Test", "Review Questions", or any end-of-chapter exercises present in the provided document.
+- You must generate 100% original questions based purely on the theoretical text, technical concepts, command descriptions, and tables within the material.
 
-### 2. Question Design
+### 2. QUESTION DESIGN
 
-- **Difficulty:** Medium to Hard. The questions should reflect the real exam's difficulty.
-- **Plausible Distractors:** Make the incorrect options (A, B, C, D) highly plausible. Use common misconceptions, nonexistent but logical-sounding syntax, or real but incorrect command flags (e.g., mixing up `grep -E` and `grep -F`, or redirecting standard error incorrectly).
-- **Scenario-Based:** Include a few troubleshooting scenarios (e.g., "You need to extract a specific column from a text file and sort it...").
+- Difficulty: [Difficulty Level, e.g., Medium to Hard]. The questions should reflect the real exam's difficulty.
+- Plausible Distractors: Make the incorrect options highly plausible. Use common misconceptions, nonexistent but logical-sounding syntax, or real but incorrect command flags.
+- Scenario-Based: Include several troubleshooting and real-world scenarios in the mix based on the concepts.
 
-### 3. Output Formatting
+### 3. REPEATER FLASHCARD FORMATTING (CRITICAL)
 
-- Format the entire response in raw, standard Markdown so it can be easily read in a terminal-based text editor.
-- Use `##` for the main title and `###` for question numbers.
-- Format all commands, file paths, and output snippets using inline code blocks (e.g., `/dev/null` or `ls -l`).
+You must format EVERY question exactly according to the `repeater` CLI flashcard syntax.
 
-### 4. Anti-Spoiler Structure
+- Start the question block with `Q:` followed by the question text and the multiple-choice options (A, B, C, D) on separate lines.
+- Start the answer block with `A:` followed by the correct letter, the correct concept, and a brief explanation of _why_ it is correct and _why_ the distractors are wrong.
+- You MUST separate each complete flashcard (Question + Answer) with a horizontal rule (`---`).
+- Format all commands, file paths, and output snippets using inline code blocks.
 
-- **DO NOT** reveal the answers immediately after the questions.
-- Place all questions first.
-- Create a clear horizontal rule (`---`) after the last question.
-- Below the rule, create a section named `## Answer Key & Explanations`.
-- In the answer key, provide the correct letter, the correct command/concept, and a brief explanation of _why_ it is correct and _why_ the distractors are wrong based on the uploaded text.
+**Strict Example Format to follow:**
 
-Generate the exam now.
+Q: [Troubleshooting scenario or technical question]
+A) [Option A]
+B) [Option B]
+C) [Option C]
+D) [Option D]
+
+A: [Correct Letter] - [Explanation of the correct answer and why the distractors are incorrect based on the text]
+
+---

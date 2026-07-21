@@ -1,359 +1,259 @@
-Q: Qual firmware moderno substituiu amplamente o tradicional BIOS na maioria dos computadores compatíveis com IBM?
-A) FTP
-B) PXE
-C) UEFI
-D) NFS
-A: C) UEFI
+Q: You are explaining the legacy BIOS boot process to a junior administrator. Why must the BIOS rely on a multi-stage bootloader mechanism rather than loading the entire operating system kernel directly into memory?
+A) The BIOS is strictly limited to addressing only up to 2 TB of hard drive space.
+B) The BIOS firmware can only read the first 512-byte sector into memory.
+C) The BIOS requires the kernel to be located on a separate physical disk.
+D) The BIOS is unable to read the FAT32 filesystem used by the MBR.
+
+A: B - The original BIOS firmware has a limitation where it can read only one sector's worth of data (the 512-byte Master Boot Record) from a hard drive into memory. Since 440 bytes of this space is dedicated to the bootstrap and is not enough to hold an entire OS kernel, a small first-stage bootloader must point to a larger secondary bootloader or kernel.
 
 ---
 
-Q: Durante a inicialização de uma máquina com firmware UEFI, qual é o local comum onde o sistema procura os aplicativos EFI (EFI applications) e os carregadores de inicialização?
-A) No MBR do primeiro disco
-B) No diretório raiz do sistema /root
-C) Na partição EFI System Partition (ESP), frequentemente montada em /boot/efi
-D) No diretório virtual /sys/firmware
-A: C) Na partição EFI System Partition (ESP), frequentemente montada em /boot/efi
+Q: On a modern server utilizing the Unified Extensible Firmware Interface (UEFI), you need to back up the bootloader files. Where are these files typically stored, and what filesystem format is strictly required by the standard?
+A) The `/boot/efi` directory on an EFI System Partition (ESP) formatted as a FAT filesystem.
+B) The `/dev/mapper` directory on a Logical Volume formatted as ext4.
+C) The Master Boot Record (MBR) on the first sector of the drive formatted as FAT32.
+D) The `/sys/firmware/efi` directory formatted as a `sysfs` pseudo-filesystem.
+
+A: A - UEFI specifies a special disk partition called the EFI System Partition (ESP) to store bootloader programs (usually `.efi` files). This partition utilizes a standard FAT-based filesystem (FAT12, FAT16, or FAT32) and is typically mounted at `/boot/efi` on Linux.
 
 ---
 
-Q: Em sistemas mais antigos ou naqueles configurados em modo legado (Legacy BIOS), onde o firmware procura pelo código binário inicial do carregador de inicialização (bootloader)?
-A) Na partição EFI
-B) No Master Boot Record (MBR) do primeiro dispositivo de armazenamento configurado no BIOS
-C) Em um servidor remoto PXE incondicionalmente
-D) No diretório /boot/grub do sistema de arquivos ext4
-A: B) No Master Boot Record (MBR) do primeiro dispositivo de armazenamento configurado no BIOS
+Q: Unlike the legacy BIOS, how does a UEFI firmware locate the correct bootloader to execute during the pre-operating system startup phase?
+A) By automatically executing the first 440 bytes of the primary hard drive's Master Boot Record.
+B) By probing all connected devices for an active `sysfs` filesystem.
+C) By reading definitions stored in its non-volatile memory (NVRAM) that point to EFI applications.
+D) By searching the `/etc/fstab` file for the UUID of the boot partition.
+
+A: C - The UEFI firmware does not rely on the MBR. Instead, it reads settings stored in its non-volatile memory (NVRAM) attached to the motherboard, which indicate the exact location of UEFI-compatible programs (EFI applications) in the ESP.
 
 ---
 
-Q: Na arquitetura do Linux, qual é o propósito principal do diretório virtual `/dev`?
-A) Armazenar os binários de dispositivos recém-compilados pelos desenvolvedores
-B) Servir como o ponto de montagem principal para o sistema de arquivos virtual sysfs
-C) Hospedar arquivos de dispositivos virtuais (device nodes) que o kernel utiliza para interagir com o hardware
-D) Guardar as chaves de criptografia públicas de cada dispositivo PCI
-A: C) Hospedar arquivos de dispositivos virtuais (device nodes) que o kernel utiliza para interagir com o hardware
+Q: A system administrator configures a primary bootloader program to simply point to a secondary bootloader program, which then provides a menu to load multiple different operating systems. What is this specific mechanism called?
+A) Multipathing
+B) Chainloading
+C) Paravirtualization
+D) Hotplugging
+
+A: B - The bootloader program isn't required to point directly to an operating system kernel file; it can point to another bootloader program. This process of a primary bootloader launching a secondary bootloader is called chainloading.
 
 ---
 
-Q: Qual das seguintes opções descreve melhor a finalidade do padrão PnP (Plug-and-Play) no gerenciamento de hardware?
-A) Otimizar os drivers de vídeo para que forneçam maior taxa de quadros (FPS) automaticamente
-B) Permitir que placas e dispositivos negociem com o sistema para determinar e alocar automaticamente endereços exclusivos, como portas de E/S e canais IRQ, evitando conflitos
-C) Baixar da internet e compilar de forma autônoma drivers para novos dispositivos no momento da conexão
-D) Fazer o bypass completo da CPU para qualquer hardware recém-inserido
-A: B) Permitir que placas e dispositivos negociem com o sistema para determinar e alocar automaticamente endereços exclusivos, como portas de E/S e canais IRQ, evitando conflitos
+Q: You are adding a network storage solution to a server environment that utilizes the Fibre Channel standard. Which hardware interface standard do the required host bus adapters (HBAs) use to physically connect to the server's motherboard?
+A) GPIO
+B) USB
+C) PCI/PCIe
+D) DMA
+
+A: C - Host bus adapters (HBAs) used to communicate on a Fibre Channel network are connected to workstations and servers using the Peripheral Component Interconnect (PCI) or PCI Express (PCIe) standard interface on the motherboard.
 
 ---
 
-Q: Qual tipo de interface de hardware comunica-se com a placa-mãe utilizando especificamente interrupções (IRQs), portas de E/S (I/O ports) e canais DMA?
-A) USB
-B) GPIO
-C) Placas de rede sem fio externas
-D) PCI
-A: D) PCI
+Q: After plugging a new, obscure digital camera into a server, the Linux kernel detects the physical connection on the bus, but the device is completely non-functional. Based on the two-step interaction Linux has with this interface, what is the most likely cause?
+A) The camera requires a direct memory access (DMA) channel, but the motherboard's PnP failed to assign one.
+B) The kernel has the controller module loaded, but lacks the specific kernel module (driver) for that camera's device type.
+C) The device was hotplugged, which is strictly unsupported by the Linux kernel for this interface type.
+D) The system administrator forgot to manually map the IC chip using the General Purpose Input/Output (GPIO) interface.
+
+A: B - Interacting with USB devices is a two-step process. First, the kernel needs a module for the USB controller to communicate with the bus (which is working since the connection is detected). Second, it needs a specific kernel module installed for the individual device type plugged into the bus.
 
 ---
 
-Q: Qual é a principal diferença de desempenho e comportamento entre a utilização de Canais DMA (Direct Memory Access) e Portas de E/S (I/O Ports) para a transferência de dados de dispositivos?
-A) O DMA transfere os dados para o disco rígido contornando a memória RAM; as portas de I/O enviam dados para o monitor
-B) Portas de I/O exigem que o processador (CPU) atue ativamente para transferir dados, o que é mais lento. O DMA permite que os dispositivos de hardware enviem os dados diretamente para a memória do sistema sem bloquear a CPU
-C) O DMA só é utilizado em dispositivos USB 3.0, enquanto portas de E/S são exclusivas para placas PCI antigas
-D) Não há diferença prática; ambos os métodos bloqueiam a CPU por períodos equivalentes
-A: B) Portas de I/O exigem que o processador (CPU) atue ativamente para transferir dados, o que é mais lento. O DMA permite que os dispositivos de hardware enviem os dados diretamente para a memória do sistema sem bloquear a CPU
+Q: A developer is building an automation project on a Raspberry Pi that reads digital values from a temperature sensor to physically turn on a cooling fan via a relay. Which interface is specifically designed to control these individual digital input and output lines?
+A) GPIO
+B) PCIe
+C) SATA
+D) SCSI
+
+A: A - The General Purpose Input/Output (GPIO) interface is popular in hobbyist Linux systems (like Raspberry Pi) and uses memory-mapped IC chips to control individual digital input and output lines down to the single-bit level, making it ideal for relays and sensors.
 
 ---
 
-Q: Em qual pseudo-sistema de arquivos residente em memória as informações detalhadas de processos e também parâmetros de configuração de hardware do kernel (como listas de interrupções e mapeamentos de E/S) são acessadas tradicionalmente?
-A) /dev
-B) /sys
-C) /proc
-D) /etc/hardware
-A: C) /proc
+Q: You execute `ls -al /dev` and notice several files starting with the letter `b` in the permissions column, and others starting with the letter `c`. What is the functional difference between these two types of device files?
+A) `b` denotes backup files, while `c` denotes core kernel files.
+B) `b` devices transfer data in large blocks (e.g., hard drives), while `c` devices transfer data one character at a time (e.g., terminals).
+C) `b` devices are mapped virtually by the Logical Volume Manager, while `c` devices represent physical hardware.
+D) `b` stands for bus interfaces like PCI, while `c` stands for communication interfaces like USB.
+
+A: B - In the `/dev` directory, block device files (denoted by `b`) transfer data in large blocks (commonly used for hard drives). Character device files (denoted by `c`) transfer data one character at a time (commonly used for serial devices and terminals).
 
 ---
 
-Q: Se um administrador suspeitar de um conflito de interrupções de hardware, qual arquivo virtual ele deve inspecionar para listar as interrupções de hardware (IRQs) solicitadas e o uso atual por dispositivos?
-A) /proc/ioports
-B) /sys/bus/irq
-C) /dev/irq
-D) /proc/interrupts
-A: D) /proc/interrupts
+Q: When configuring the Logical Volume Manager (LVM) to aggregate multiple physical drive partitions into a single virtual volume, where does the Linux kernel dynamically create the virtual block device files representing this volume?
+A) `/sys/block`
+B) `/proc/partitions`
+C) `/dev/mapper`
+D) `/lib/modules`
+
+A: C - The Linux device mapper creates virtual block devices in the `/dev/mapper` directory. These are links to physical block devices used by LVM for creating logical drives and LUKS for encryption.
 
 ---
 
-Q: Um administrador precisa descobrir quais endereços específicos de memória na máquina estão designados para que a CPU se comunique ativamente com o hardware (as portas I/O designadas). Onde essa informação fica armazenada em tempo real?
-A) /proc/ioports
-B) /proc/dma
-C) /proc/interrupts
-D) /sys/devices/ports
-A: A) /proc/ioports
+Q: A system administrator connects a legacy IDE hard drive to the primary master channel of the motherboard. Which absolute path represents the device file that the kernel traditionally associates with this specific disk?
+A) `/dev/sda`
+B) `/dev/hda`
+C) `/dev/ide0`
+D) `/sys/block/hda`
+
+A: B - Legacy IDE hard drives are represented by files in the `/dev` directory with the `hd` prefix. `/dev/hda` represents the master device on the first IDE channel, `/dev/hdb` for primary slave, etc.
 
 ---
 
-Q: O diretório `/sys` hospeda o sistema de arquivos virtual `sysfs`. Qual é a finalidade principal do sysfs introduzida no Kernel Linux 2.6?
-A) Substituir o carregador de inicialização GRUB por um sistema de arquivos montável
-B) Hospedar scripts de compilação automáticos do kernel
-C) Exportar informações organizadas hierarquicamente sobre dispositivos de hardware conectados, seus drivers e o modelo de barramentos do kernel para o userspace
-D) Armazenar logs persistentes do sistema (substituindo o /var/log)
-A: C) Exportar informações organizadas hierarquicamente sobre dispositivos de hardware conectados, seus drivers e o modelo de barramentos do kernel para o userspace
+Q: While troubleshooting a sound card issue, you suspect a hardware conflict is preventing the device from signaling the CPU that it has data to send. Which virtual file should you inspect to view the unique addresses currently assigned for this purpose?
+A) `/proc/dma`
+B) `/proc/ioports`
+C) `/proc/interrupts`
+D) `/sys/class/sound`
+
+A: C - Interrupt Requests (IRQs) allow hardware devices to indicate when they have data for the CPU. The system assigns a unique IRQ to each device, and the current usage across CPUs can be viewed in `/proc/interrupts`.
 
 ---
 
-Q: Qual utilitário de linha de comando analisa o hardware da máquina e exibe uma lista detalhada de todos os dispositivos diretamente conectados ao barramento PCI do sistema?
-A) lsusb
-B) lsmod
-C) lspci
-D) lshw
-A: C) lspci
+Q: You are manually verifying the Plug-and-Play (PnP) memory locations where the CPU sends and receives data directly from a physical hardware device. Which file must you read to find this specific information?
+A) `/proc/dma`
+B) `/proc/ioports`
+C) `/proc/cpuinfo`
+D) `/dev/kmem`
+
+A: B - The system I/O ports are specific locations in memory where the CPU can send data to and receive data from hardware devices. This information is monitored dynamically by reading `/proc/ioports`.
 
 ---
 
-Q: Após plugar um novo teclado e um mouse, qual comando pode ser usado para inspecionar imediatamente todos os controladores USB e os dispositivos fixados a eles de maneira direta?
-A) lspci
-B) dmesg --usb
-C) lsmod
-D) lsusb
-A: D) lsusb
+Q: To speed up operations, a high-performance network card is sending data directly to the system's RAM without waiting for the CPU to process the transfer. Which virtual file tracks the channels assigned for this specific type of high-speed transfer?
+A) `/proc/dma`
+B) `/proc/interrupts`
+C) `/proc/ioports`
+D) `/sys/bus/pci`
+
+A: A - Direct Memory Access (DMA) channels allow devices to send data directly to memory without having to wait for the CPU. The `/proc/dma` file lists the registered DMA channels currently in use.
 
 ---
 
-Q: Qual utilitário é utilizado para exibir o status de todos os módulos de kernel atualmente carregados na memória do Linux?
-A) sysmod
-B) lsmod
-C) modprobe
-D) lspci -m
-A: B) lsmod
+Q: Both `/proc` and `/sys` are pseudo-filesystems kept entirely in RAM. How does the specific purpose of the `/sys` directory fundamentally differ from `/proc`?
+A) `/sys` stores persistent configuration files across reboots, while `/proc` is wiped on reboot.
+B) `/sys` exclusively contains legacy character device files, while `/proc` handles block devices.
+C) `/sys` specifically categorizes hardware devices, buses, and kernel modules, whereas `/proc` broadly includes running processes and kernel data structures.
+D) `/sys` is used strictly by the UEFI boot manager, whereas `/proc` is used by the legacy BIOS.
+
+A: C - The `/sys` directory (built on the `sysfs` filesystem) has the specific purpose of categorizing hardware information, storing device and kernel data broken down into subdirectories like bus, class, and module. `/proc` also contains hardware info but broadly includes data on running processes and kernel configurations.
 
 ---
 
-Q: Para adicionar (carregar) ativamente um novo módulo de hardware no kernel em tempo de execução e, crucialmente, resolver e carregar todas as dependências adicionais automaticamente, qual comando deve ser utilizado?
-A) insmod
-B) lsmod
-C) modprobe
-D) rmmod
-A: C) modprobe
+Q: An administrator is navigating the `sysfs` filesystem to find how the Linux kernel categorizes a specific loaded driver. Which directory inside `/sys` will display a list of all currently recognized kernel modules?
+A) `/sys/firmware`
+B) `/sys/module`
+C) `/sys/class`
+D) `/sys/bus`
+
+A: B - Within the `sysfs` pseudo-filesystem mounted at `/sys`, the `/sys/module` directory categorizes and contains subdirectories for all the kernel modules currently recognized and loaded by the system.
 
 ---
 
-Q: Um administrador tenta descarregar o módulo do bluetooth executando `modprobe -r bluetooth`, porém o sistema retorna o erro: "modprobe: FATAL: Module bluetooth is in use". Qual é a causa mais provável?
-A) O usuário não invocou o comando como root
-B) O módulo falhou em compilar a dependência de PnP
-C) Um outro dispositivo, driver ou módulo carregado possui dependência ativa ou está utilizando o módulo de bluetooth no momento
-D) O hardware bluetooth não está presente fisicamente na máquina
-A: C) Um outro dispositivo, driver ou módulo carregado possui dependência ativa ou está utilizando o módulo de bluetooth no momento
+Q: A technician wants a consolidated view of the system's hardware settings, specifically combining IRQs, I/O ports, and DMA channels into a single output to easily spot conflicts. Which command accomplishes this?
+A) `lsblk`
+B) `lsusb`
+C) `lspci`
+D) `lsdev`
+
+A: D - The `lsdev` command-line tool retrieves information from `/proc/interrupts`, `/proc/ioports`, and `/proc/dma` and combines them together in one output, providing a centralized view of hardware resource usage.
 
 ---
 
-Q: Qual daemon e gerenciador de subsistemas do Linux lida dinamicamente com as mudanças de estado de hardware, detectando quando um dispositivo é conectado e criando os respectivos "device nodes" em `/dev`?
-A) init
-B) udev
-C) dbus
-D) hald
-A: B) udev
+Q: You are auditing the storage devices attached to a server. You want to execute `lsblk`, but you need it to exclusively display information about Small Computer System Interface (SCSI) block devices. Which exact flag must be used?
+A) `lsblk -t`
+B) `lsblk -v`
+C) `lsblk -S`
+D) `lsblk -a`
+
+A: C - By default, `lsblk` displays all block devices. However, adding the `-S` command-line option modifies the output to display information exclusively about SCSI block devices installed on the system.
 
 ---
 
-Q: O `dbus` (Desktop Bus) é muito mencionado ao lado de ferramentas de detecção de hardware. Qual é a sua responsabilidade primária neste contexto?
-A) Atuar como barramento de hardware físico, equivalente ao USB, para periféricos internos
-B) Servir como o driver genérico para teclados e mouses plug and play
-C) Fornecer um sistema de Comunicação Interprocessos (IPC) que permite que os processos do sistema notifiquem imediatamente as aplicações de desktop e do usuário quando um hardware muda de estado
-D) Montar partições UEFI durante o processo de boot
-A: C) Fornecer um sistema de Comunicação Interprocessos (IPC) que permite que os processos do sistema notifiquem imediatamente as aplicações de desktop e do usuário quando um hardware muda de estado
+Q: Part of the `lspci` output shows `04:02.0 Network controller: Ralink corp. RT2561/RT61 802.11g PCI`. Which command should you execute to identify the specific kernel module (driver) currently in use for this exact device slot?
+A) `lspci -s 04:02.0 -k`
+B) `lspci -t 04:02.0 -m`
+C) `lspci -d 04:02.0 -v`
+D) `lspci -x 04:02.0`
+
+A: A - The `-s` option selects a specific device by its slot/address (`04:02.0`). The `-k` option tells `lspci` to display the kernel driver in use and the kernel modules available for that specific PCI card.
 
 ---
 
-Q: Uma máquina possui dois discos SATA em operação. Qual arquivo de dispositivo bruto (raw device file) o Linux normalmente criará em `/dev` para representar e endereçar o SEGUNDO disco rígido conectado ao sistema?
-A) /dev/hdb
-B) /dev/sda2
-C) /dev/sdb
-D) /dev/sdb1
-A: C) /dev/sdb
+Q: A system administrator needs to visually understand the hierarchy and physical connections between the motherboard's PCI buses and the installed expansion cards. Which `lspci` option provides this specific representation?
+A) `lspci -m`
+B) `lspci -t`
+C) `lspci -x`
+D) `lspci -n`
+
+A: B - The `lspci -t` command displays a tree diagram that shows the hierarchical connections between the PCI cards and the system buses.
 
 ---
 
-Q: Qual tipo de dispositivo de armazenamento de dados utiliza internamente um circuito integrado de memória, sem conter peças mecânicas ou pratos giratórios?
-A) HDD (Hard Disk Drive)
-B) SCSI Magnético
-C) SSD (Solid-State Drive)
-D) SATA
-A: C) SSD (Solid-State Drive)
+Q: You want to inspect the current mappings of all connected USB devices as a hierarchical tree to identify which specific kernel module is driving each interface (e.g., `Driver=btusb`). Which command provides this output?
+A) `lsusb -d`
+B) `lsusb -v`
+C) `lsusb -t`
+D) `lsusb -s`
+
+A: C - The `lsusb -t` command shows the current USB device mappings as a hierarchical tree. At the end of the line for a device with a matching module, its assigned driver appears (e.g., `Driver=btusb`).
 
 ---
 
-Q: Na listagem do comando `lspci`, o administrador repara no código `03:00.0` antes do nome do dispositivo RAID. O que este código geralmente representa?
-A) O identificador geográfico do slot e a designação do barramento da placa
-B) A versão de firmware injetada na placa
-C) O código de erro da inicialização do driver
-D) O número exato da porta de I/O em formato hexadecimal
-A: A) O identificador geográfico do slot e a designação do barramento da placa
+Q: A junior administrator tries to install a downloaded kernel module using the `insmod` command. The command fails abruptly with a missing symbols error because the module relies on another driver not currently loaded. Which command should the administrator have used to automatically resolve and load the missing dependencies?
+A) `modinfo`
+B) `lsmod`
+C) `modprobe`
+D) `depmod`
+
+A: C - The downside to `insmod` is that it requires you to specify the exact file and does not resolve dependencies. The `modprobe` command intelligently reads the `modules.dep` file, automatically resolving and loading any dependencies before loading the requested module.
 
 ---
 
-Q: Se um servidor baseado na arquitetura x86 com firmware BIOS legado não consegue completar a inicialização (boot) após o administrador desconectar o teclado. Como este problema específico pode ser mitigado?
-A) Adicionando "keyboard=ignore" aos parâmetros do kernel no GRUB
-B) Desativando a checagem de erros do teclado (Halt on keyboard error) no utilitário de configuração local do próprio BIOS
-C) Instalando e habilitando o driver udev-keyboard-stub no Linux
-D) Trocando a porta do teclado de USB para PS/2
-A: B) Desativando a checagem de erros do teclado (Halt on keyboard error) no utilitário de configuração local do próprio BIOS
+Q: When viewing the output of the `lsmod` command, you notice a number and a list of names in the "Used by" column next to the `snd_intel8x0` module. What does this column specifically indicate?
+A) The amount of RAM, in bytes, occupied by the module.
+B) The number of hardware devices physically attached to the driver.
+C) The process ID (PID) of the user space application utilizing the driver.
+D) The other depending kernel modules that require this module to function.
+
+A: D - The `lsmod` output is divided into three columns: Module (name), Size (RAM occupied), and Used by. The "Used by" column lists the other depending kernel modules that require this specific module to work properly.
 
 ---
 
-Q: Um administrador de sistema adicionou um segundo disco rígido SATA a uma máquina que estava operando normalmente. Ao tentar inicializá-la novamente, o sistema exibe erro de bootloader e falha na inicialização. Qual é a causa mais provável abordada neste material?
-A) Os discos SATA são mutuamente exclusivos e não suportam configurações de múltiplos discos em hardware padrão
-B) A presença de um disco secundário obriga a transição de BIOS para UEFI
-C) A ordem dos dispositivos de boot (Boot Device Order) no utilitário do BIOS/UEFI foi desconfigurada e o sistema está tentando ler o setor de boot do disco novo e vazio
-D) O kernel do Linux perdeu as permissões PnP
-A: C) A ordem dos dispositivos de boot (Boot Device Order) no utilitário do BIOS/UEFI foi desconfigurada e o sistema está tentando ler o setor de boot do disco novo e vazio
+Q: You want to query the author, alias, and exact file path of the `bluetooth` kernel module object (`.ko`) file without actually loading it into the running kernel. Which command accomplishes this?
+A) `modinfo bluetooth`
+B) `lsmod | grep bluetooth`
+C) `depmod -a bluetooth`
+D) `insmod bluetooth`
+
+A: A - The `modinfo` command reads the module object file and displays detailed information, including the absolute file path, aliases, author, and description, without attempting to load it into the kernel.
 
 ---
 
-Q: Uma partição designada como `/dev/sda3` refere-se a quê especificamente no modelo de nomenclatura do kernel Linux?
-A) Aos 3 primeiros setores montados do disco secundário SCSI
-B) À terceira partição do primeiro disco rígido detectado (tipo SCSI/SATA/USB)
-C) À primeira partição do terceiro disco rígido
-D) A um dispositivo RAID de três vias ativo
-A: B) À terceira partição do primeiro disco rígido detectado (tipo SCSI/SATA/USB)
+Q: To ensure a custom hardware module is loaded automatically every time the Linux system boots, which configuration file should you add the module name to?
+A) `/etc/modules.conf`
+B) `/etc/modules`
+C) `/lib/modules/modules.dep`
+D) `/proc/modules`
+
+A: B - The modules that the kernel will systematically load at boot time are explicitly listed in the `/etc/modules` file, one per line. (Note: `/etc/modules.conf` and `/etc/modprobe.d/` are used for module parameters, not boot loading lists).
 
 ---
 
-Q: Em muitos sistemas mais antigos, qual daemon de abstração de hardware atuava fortemente em conformidade com o D-Bus para enumerar dispositivos para os programas de desktop, mas que hoje é considerado legado e substituído na prática pelo Udev?
-A) acpid
-B) hald (Hardware Abstraction Layer daemon)
-C) systemd-hw
-D) initrd
-A: B) hald (Hardware Abstraction Layer daemon)
+Q: A server administrator needs to completely remove the `btusb` module and all of its unused dependent modules from the running kernel. Which command safely achieves this dependency-aware removal?
+A) `rmmod btusb`
+B) `modprobe -r btusb`
+C) `insmod -r btusb`
+D) `depmod -r btusb`
+
+A: B - While `rmmod` removes a single module, `modprobe -r` acts intelligently. It invokes the removal but also safely handles and removes other unused modules that depended on the target module, ensuring a clean state.
 
 ---
 
-Q: Qual das seguintes opções de hardware embutido na placa-mãe, também chamados de periféricos integrados (integrated peripherals), pode frequentemente ser habilitada ou totalmente desabilitada utilizando a interface de configuração do BIOS ou UEFI?
-A) Placas de som on-board e controladores de rede (NICs) embutidos
-B) Frequência do monitor principal
-C) Partições LVM nativas
-D) A resolução do servidor X11
-A: A) Placas de som on-board e controladores de rede (NICs) embutidos
+Q: You manually compile a new hardware module and copy the resulting `.ko` file into the `/lib/modules/$(uname -r)/` directory. Before `modprobe` can successfully identify this module and its dependencies, which command must you run?
+A) `lsmod`
+B) `insmod`
+C) `depmod`
+D) `modinfo`
 
----
-
-Q: Em relação ao gerenciamento de módulos no kernel Linux, em qual arquivo ou subsistema virtual o comando `lsmod` procura suas informações para listar o que está ativo?
-A) Ele analisa ativamente o arquivo de configuração `/etc/modprobe.conf`
-B) Ele extrai suas saídas formatadas a partir da leitura do arquivo `/proc/modules`
-C) Ele executa uma requisição D-Bus para o HAL
-D) Ele compila o binário `/boot/vmlinuz` para extrair descritores
-A: B) Ele extrai suas saídas formatadas a partir da leitura do arquivo `/proc/modules`
-
----
-
-Q: Ao tentar solucionar problemas de conexão com uma placa-mãe USB, um administrador quer revisar o log do _Kernel Ring Buffer_ para ver se a porta USB foi detectada durante a última inserção pelo subsistema PnP. Qual comando visualizará essa saída?
-A) dmesg
-B) lsmod
-C) lsof
-D) modprobe --log
-A: A) dmesg
-
----
-
-Q: O `modprobe` pode ser configurado para incluir ou ignorar certos módulos através de arquivos de configuração em disco, além da resolução de dependências. Qual é o diretório padrão onde essas configurações de arquivos `.conf` customizadas do modprobe residem?
-A) /usr/share/modules/
-B) /etc/modprobe.d/
-C) /proc/sys/modules/
-D) /var/lib/modprobe/
-A: B) /etc/modprobe.d/
-
----
-
-Q: O conceito de "Mass Storage Devices" no currículo LPIC inclui uma variedade de opções de discos e arranjos. Qual tecnologia utiliza arranjos de múltiplos discos independentes organizados logicamente para aumentar a tolerância a falhas ou o desempenho do sistema de arquivos de hardware de uma só vez?
-A) Arquitetura PATA
-B) Tecnologia RAID
-C) Particionamento MBR de alta velocidade
-D) D-Bus
-A: B) Tecnologia RAID
-
----
-
-Q: O que define um módulo de hardware no Linux?
-A) Um binário autônomo e isolado do Kernel, armazenado em `/bin`, usado para rodar GUI
-B) Uma extensão compilada dinamicamente, geralmente com a extensão `.ko`, que pode ser carregada em demanda no kernel para adicionar suporte a um novo dispositivo de hardware
-C) Uma placa aceleradora física baseada em slots PCI-E de 16x
-D) O chip contendo as informações ROM do BIOS
-A: B) Uma extensão compilada dinamicamente, geralmente com a extensão `.ko`, que pode ser carregada em demanda no kernel para adicionar suporte a um novo dispositivo de hardware
-
----
-
-Q: Durante a inicialização (boot), os controladores de disco (como um RAID MegaRAID SAS) precisam ser reconhecidos e seus módulos engatados. Qual comando, ao listar dispositivos PCI, exibiria informações detalhadas incluindo qual módulo (Kernel driver in use) gerencia esse controlador RAID?
-A) lsusb -verbose
-B) lspci -k
-C) lsmod -a
-D) modprobe -raid
-A: B) lspci -k
-
----
-
-Q: Com a migração da arquitetura clássica para sysfs e udev, o conteúdo do `/dev` sofreu uma importante modificação de comportamento. Como esse diretório é gerenciado em distribuições modernas?
-A) Ele é um sistema de arquivos puramente estático populado manualmente via comando MAKEDEV durante a instalação
-B) O diretório é hospedado na nuvem e lido via protocolo NFS
-C) Ele é montado de forma virtual como devtmpfs e populado de forma completamente dinâmica no espaço de usuário (userspace) pelo udev conforme hardwares são detectados
-D) Seus arquivos estão permanentemente amarrados e salvos na partição lógica `/boot/efi`
-A: C) Ele é montado de forma virtual como devtmpfs e populado de forma completamente dinâmica no espaço de usuário (userspace) pelo udev conforme hardwares são detectados
-
----
-
-Q: O que o termo "Hotplug" representa em administração de hardware no Linux?
-A) O aumento excessivo da temperatura da CPU quando DMA falha
-B) A capacidade de conectar e desconectar dispositivos no sistema operacional de forma segura e com reconhecimento imediato enquanto a máquina já está em funcionamento
-C) Plugar um cabo de rede em um equipamento que requer inicialização (cold boot)
-D) A técnica de particionar e criptografar a MBR em movimento
-A: B) A capacidade de conectar e desconectar dispositivos no sistema operacional de forma segura e com reconhecimento imediato enquanto a máquina já está em funcionamento
-
----
-
-Q: Se um administrador desejar visualizar exatamente todos os canais de Acesso Direto à Memória (DMA) que estão ativamente em uso por dispositivos em seu computador no momento, qual arquivo ele deve inspecionar?
-A) /sys/dma/status
-B) /proc/dma
-C) /etc/dma.conf
-D) /dev/dma_ports
-A: B) /proc/dma
-
----
-
-Q: Você possui uma unidade de disco com um ambiente em falha. Qual ferramenta do Linux deve ser usada para inspecionar, criar ou gerenciar as partições lógicas de um disco rígido SCSI antes de adicionar sistemas de arquivo em cima dessas partições?
-A) fdisk (ou gdisk/parted)
-B) fsck
-C) mount
-D) lvm_disk
-A: A) fdisk (ou gdisk/parted)
-
----
-
-Q: Como é chamado o utilitário nativo projetado especificamente para converter múltiplas partições físicas de disco em agrupamentos de Volumes Lógicos altamente flexíveis (LVM) em níveis de abstração?
-A) mkfs
-B) lspci
-C) parted
-D) pvcreate / vgcreate / lvcreate
-A: D) pvcreate / vgcreate / lvcreate
-
----
-
-Q: O diretório `/dev` separa componentes em Block Devices (dispositivos de bloco) e Character Devices (dispositivos de caractere). Qual das opções ilustra melhor um "Dispositivo de Bloco"?
-A) Uma placa de captura de som
-B) O console do terminal TTY
-C) Um disco rígido formatado, pois lê e grava informações em buffers de blocos regulares
-D) Um mouse USB enviando eventos contínuos
-A: C) Um disco rígido formatado, pois lê e grava informações em buffers de blocos regulares
-
----
-
-Q: É prático saber visualizar as árvores e raízes (hubs) dos dispositivos USB em uma topologia lógica hierárquica. Qual parâmetro de `lsusb` ativa esta visão em árvore no prompt?
-A) lsusb -t
-B) lsusb -r
-C) lsusb --tree
-D) lsusb -hier
-A: A) lsusb -t
-
----
-
-Q: O utilitário `fsck` tem papel fundamental sobre as unidades de armazenamento de massa após elas estarem particionadas e ativadas no sistema. Qual é esse papel?
-A) Ele anexa novos discos SCSI ativamente no diretório /dev automaticamente
-B) É responsável por particionar o disco magnético de rotação
-C) É utilizado para checar e reparar danos na integridade dos sistemas de arquivos montados ou desmontados em partições
-D) Configura as IRQs para que a placa controladora atue via PnP
-A: C) É utilizado para checar e reparar danos na integridade dos sistemas de arquivos montados ou desmontados em partições
+A: C - The `depmod` utility determines module relationships and generates the `modules.dep` file. If you manually modify or add modules to the `/lib/modules/version/` tree, you must manually run `depmod` to update this index so `modprobe` can find the new module.
 
 ---
